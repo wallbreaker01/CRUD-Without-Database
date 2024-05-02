@@ -1,23 +1,29 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const router = require('./routes/routs');
+const express = require("express");
+const mongoose = require('mongoose');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware configuration
-app.use(bodyParser.json());
 
-// Setup routes
-app.use('/', router);
-
-// Error handling middleware
-app.use((error, req, res, next) => {
-    console.error(error.stack);
-    res.status(500).send({ error: 'Something went wrong' });
+// conenction to mongodb
+mongoose.connect("mongodb://localhost/todo_express", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
-// Launch the server
-app.listen(PORT, () => {
-    console.log(`Server is up and running at http://localhost:${PORT}`);
-});
+
+// middlewares
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.set("view engine", "ejs");
+
+
+
+// routes
+app.use(require("./routes/index"))
+app.use(require("./routes/todo"))
+
+
+
+
+// server configurations....
+app.listen(3000, () => console.log("Server started listening on port: 3000"));
